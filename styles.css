@@ -234,6 +234,10 @@ body.has-results .examples { display: none; }
 .notice--error { background: var(--c-error-soft); color: var(--c-error); }
 .notice--empty { background: var(--c-surface); border: 1px dashed var(--c-border); text-align: center; padding: var(--s-8) var(--s-4); }
 
+/* Model-number filter bar */
+.similar-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); }
+.link-btn { background: none; border: 0; padding: var(--s-1) 0; min-height: 32px; color: var(--c-info); font-weight: 600; text-decoration: underline; cursor: pointer; }
+
 /* ---------- Results header & toolbar ---------- */
 .results__head { margin-bottom: var(--s-4); }
 .results__title { font-size: 1.25rem; font-weight: 700; }

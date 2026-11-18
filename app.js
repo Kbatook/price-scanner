@@ -65,6 +65,10 @@
       demoNote: 'بيانات تجريبية',
       productImage: (t) => `صورة ${t}`,
       outlier: 'سعر أقل بكثير من غيره، تأكد أنه نفس المنتج',
+      showSimilar: (n) => `إظهار ${n} نتيجة مشابهة بموديلات أخرى`,
+      hideSimilar: 'إخفاء النتائج المشابهة',
+      similarShown: (m) => `تُعرض الآن نتائج موديلات أخرى أيضاً، وليس فقط «${m}».`,
+      noExact: (m) => `لم نجد عروضاً تطابق الموديل «${m}» تماماً، فنعرض أقرب النتائج. تأكد من اسم كل منتج قبل الشراء.`,
     },
     en: {
       skip: 'Skip to content',
@@ -114,6 +118,10 @@
       demoNote: 'demo data',
       productImage: (t) => `Image of ${t}`,
       outlier: 'Much cheaper than the rest — check it is the same product',
+      showSimilar: (n) => `Show ${n} similar results (other models)`,
+      hideSimilar: 'Hide similar results',
+      similarShown: (m) => `Results for other models are shown too, not only “${m}”.`,
+      noExact: (m) => `No offers exactly match model “${m}”, so the closest results are shown. Check each product name before buying.`,
     },
   };
 
@@ -157,6 +165,7 @@
     saudiOnly: false,
     lastError: null,
     loading: false,
+    showSimilar: false, // show results whose model number differs from the query
   };
 
   /* ------------------------------------------------------------ DOM */
@@ -295,6 +304,7 @@
     state.results = [];
     state.lastError = null;
     state.store = '';
+    state.showSimilar = false;
     el.input.value = v.q;
     syncUrl(v.q);
     renderDirectLinks();
@@ -375,9 +385,49 @@
     el.list.replaceChildren(frag);
   }
 
+  /* ------------------------------------------------------------ model-number matching */
+  // Google Shopping mixes neighbouring models (e.g. iPhone 17 when searching iPhone 18).
+  // We extract the model numbers from the query and keep results whose title has them.
+  const toLatinDigits = (str) => String(str || '')
+    .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0));
+
+  // Units that mean capacity/size, not a model: 256gb, 1 tb, 128 جيجا, 6.9 inch…
+  const UNIT_RE = /^(gb|tb|mb|g|t|جيجا|جيجابايت|غيغا|تيرا|تيرابايت|mah|w|واط|inch|in|بوصة|انش|mm|ml|l|لتر|kg|كجم|مل)$/i;
+
+  function extractModelNumbers(query) {
+    const tokens = toLatinDigits(query).toLowerCase().split(/[^0-9a-z\u0600-\u06FF.]+/).filter(Boolean);
+    const nums = [];
+    tokens.forEach((tok, i) => {
+      const m = tok.match(/^([a-z\u0600-\u06FF]*)(\d+)([a-z\u0600-\u06FF]*)$/);
+      if (!m) return;
+      const [, , num, suffix] = m;
+      if (suffix && UNIT_RE.test(suffix)) return;            // "256gb"
+      if (!suffix && UNIT_RE.test(tokens[i + 1] || '')) return; // "256 gb"
+      if (num.length > 4) return;                              // long codes/barcodes: skip
+      nums.push(num);
+    });
+    return [...new Set(nums)];
+  }
+
+  function matchesModel(title, nums) {
+    const text = toLatinDigits(title);
+    return nums.every((n) => new RegExp(`(^|[^0-9])${n}([^0-9]|$)`).test(text));
+  }
+
+  /** Results to work with: exact model matches first, unless the user asks for similar ones. */
+  function getBaseResults() {
+    const nums = extractModelNumbers(state.query);
+    if (!nums.length) return { items: state.results, nums, exactCount: state.results.length, hidden: 0 };
+    const exact = state.results.filter((r) => matchesModel(r.title, nums));
+    if (!exact.length) return { items: state.results, nums, exactCount: 0, hidden: 0 };
+    if (state.showSimilar) return { items: state.results, nums, exactCount: exact.length, hidden: 0 };
+    return { items: exact, nums, exactCount: exact.length, hidden: state.results.length - exact.length };
+  }
+
   /* ------------------------------------------------------------ rendering */
-  function getVisible() {
-    let items = state.results.slice();
+  function getVisible(base) {
+    let items = base.slice();
     if (state.saudiOnly) items = items.filter((r) => r.saudi);
     if (state.store) items = items.filter((r) => r.store === state.store);
     const byPrice = (a, b) => a.price.sar - b.price.sar;
@@ -401,8 +451,10 @@
       return;
     }
 
-    renderStoreOptions();
-    const items = getVisible();
+    const base = getBaseResults();
+    renderStoreOptions(base.items);
+    const items = getVisible(base.items);
+    renderModelNotice(base);
     const storeCount = new Set(items.map((r) => r.store)).size;
     el.meta.textContent = t('meta', items.length, storeCount) +
       (state.cached ? ` · ${t('fromCache')}` : '') +
@@ -445,8 +497,33 @@
     return set;
   }
 
-  function renderStoreOptions() {
-    const stores = [...new Set(state.results.map((r) => r.store))].sort((a, b) => a.localeCompare(b, state.lang));
+  function renderModelNotice(base) {
+    if (!base.nums.length || !state.results.length) return;
+    const model = base.nums.join(' ');
+    let box = null;
+    if (base.exactCount === 0) {
+      box = notice('notice--info', t('noExact', model));
+    } else if (base.hidden > 0 || state.showSimilar) {
+      box = document.createElement('div');
+      box.className = 'notice notice--info similar-bar';
+      if (state.showSimilar) {
+        const p = document.createElement('span');
+        p.textContent = t('similarShown', model);
+        box.append(p);
+      }
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'link-btn';
+      btn.textContent = state.showSimilar ? t('hideSimilar') : t('showSimilar', base.hidden);
+      btn.addEventListener('click', () => { state.showSimilar = !state.showSimilar; render(); });
+      box.append(btn);
+      if (!state.showSimilar && base.hidden === 0) box = null;
+    }
+    if (box) el.status.append(box);
+  }
+
+  function renderStoreOptions(source) {
+    const stores = [...new Set(source.map((r) => r.store))].sort((a, b) => a.localeCompare(b, state.lang));
     const frag = document.createDocumentFragment();
     const all = document.createElement('option');
     all.value = '';

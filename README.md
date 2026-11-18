@@ -34,7 +34,7 @@
    - KV namespace: `price-scanner-cache`
 6. من **Settings** افتح **Variables and Secrets**، ثم **Add**:
    - `SERPAPI_KEY` من نوع **Secret**، وقيمته المفتاح الذي نسخته من SerpApi.
-   - `ALLOWED_ORIGINS` من نوع **Text**، وقيمته `https://USERNAME.github.io`، مع وضع اسم حسابك في GitHub مكان USERNAME، ودون مسار أو `/` في النهاية.
+   - `ALLOWED_ORIGINS` من نوع **Text**، وقيمته `https://kbatook.github.io`، دون مسار أو `/` في النهاية.
    - `DAILY_LIMIT` من نوع **Text**، وقيمته `8`، وهي عدد عمليات البحث الجديدة المسموح بها يومياً حتى تكفي الحصة الشهرية.
 7. انسخ رابط الـ Worker، ويكون بهذا الشكل: `https://price-scanner.xxxx.workers.dev`
 8. للتأكد من أن الـ Worker يعمل، افتح الرابط مضافاً إليه `/health`. يجب أن يظهر `{"ok":true,...}`.
@@ -51,11 +51,10 @@ window.PRICE_SCANNER_CONFIG = {
 1. في GitHub اضغط **New repository**، وسمّه `price-scanner` واجعله **Public**.
 2. اضغط **Add file**، ثم **Upload files**، وارفع: `index.html` و`styles.css` و`app.js` و`config.js` و`favicon.svg` و`README.md`، ثم **Commit**.
 3. افتح **Settings**، ثم **Pages**، واختر في **Source** خيار **Deploy from a branch**، ثم Branch `main` والمجلد `/ (root)`، واضغط **Save**.
-4. بعد دقيقة إلى دقيقتين يصبح الموقع متاحاً على: `https://USERNAME.github.io/price-scanner/`
+4. بعد دقيقة إلى دقيقتين يصبح الموقع متاحاً على: `https://kbatook.github.io/price-scanner/`
 
-### 5) تحسين SEO بعد النشر (اختياري)
-في `index.html` غيّر `"target": "./?q={search_term_string}"` إلى الرابط الكامل:
-`"https://USERNAME.github.io/price-scanner/?q={search_term_string}"`
+### 5) تحسين SEO
+تم ضبط الرابط الكامل للموقع (`https://kbatook.github.io/price-scanner/`) في `index.html` مسبقاً، ولا يحتاج أي تعديل.
 
 ---
 
