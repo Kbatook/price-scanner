@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- SEO -->
+  <title>سكنر أسعار | قارن أسعار المنتجات في نون وأمازون وجرير والمتاجر العالمية</title>
+  <meta name="description" content="سكنر أسعار يقارن لك سعر أي منتج في نون وأمازون وجرير وإكسترا والمتاجر العالمية التي تشحن للسعودية، ويعرض الأسعار بالريال السعودي مرتبة من الأرخص. مجاني وبدون تسجيل.">
+  <meta name="keywords" content="مقارنة أسعار, أسعار السعودية, نون, أمازون السعودية, جرير, إكسترا, أرخص سعر, Price Scanner">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="سكنر أسعار – Price Scanner">
+  <meta property="og:title" content="سكنر أسعار | قارن الأسعار في ثوانٍ">
+  <meta property="og:description" content="اكتب اسم المنتج، ونقارن لك أسعاره في المتاجر السعودية والعالمية بالريال السعودي.">
+  <meta property="og:locale" content="ar_SA">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <!-- Font: IBM Plex Sans Arabic (only external dependency) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Structured data: lets Google show a search box for the site -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "سكنر أسعار – Price Scanner",
+    "inLanguage": ["ar", "en"],
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "./?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">تخطَّ إلى المحتوى</a>
+
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="./" aria-label="سكنر أسعار – الصفحة الرئيسية" data-i18n-aria="homeLabel">
+        <svg class="brand__logo" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect width="64" height="64" rx="14" fill="currentColor"/>
+          <circle cx="28" cy="28" r="15" fill="none" stroke="#fff" stroke-width="6"/>
+          <path d="M39 39l12 12" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+          <path d="M23 23h10M23 28h10M23 33h7" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span class="brand__name" data-i18n="brand">سكنر أسعار</span>
+      </a>
+      <button id="langToggle" class="lang-toggle" type="button" lang="en" aria-label="Switch to English">EN</button>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <!-- Hero + search -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <h1 id="heroTitle" class="hero__title" data-i18n="heroTitle">قارن الأسعار في ثوانٍ</h1>
+      <p class="hero__sub" data-i18n="heroSub">اكتب اسم أي منتج بالعربي أو الإنجليزي، ونقارن لك أسعاره في نون وأمازون وجرير وإكسترا والمتاجر العالمية التي تشحن للسعودية.</p>
+
+      <form id="searchForm" class="search" role="search" novalidate>
+        <label for="q" class="visually-hidden" data-i18n="searchLabel">اسم المنتج</label>
+        <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input id="q" name="q" type="search" class="search__input" autocomplete="off"
+               minlength="2" maxlength="100" required enterkeyhint="search"
+               placeholder="مثال: آيفون 16 برو، PS5، سماعات سوني…" data-i18n-placeholder="searchPlaceholder"
+               aria-describedby="formError">
+        <button type="submit" class="btn btn--primary search__btn">
+          <span data-i18n="searchBtn">ابحث</span>
+        </button>
+      </form>
+      <p id="formError" class="form-error" role="alert" hidden></p>
+
+      <div class="examples" aria-labelledby="examplesLabel">
+        <span id="examplesLabel" class="examples__label" data-i18n="examples">جرّب:</span>
+        <button type="button" class="chip" data-q="iPhone 16 Pro">iPhone 16 Pro</button>
+        <button type="button" class="chip" data-q="PlayStation 5">PlayStation 5</button>
+        <button type="button" class="chip" data-q="AirPods Pro">AirPods Pro</button>
+        <button type="button" class="chip" data-q="قلاية هوائية">قلاية هوائية</button>
+        <button type="button" class="chip" data-q="ساعة سامسونج">ساعة سامسونج</button>
+      </div>
+    </section>
+
+    <!-- Demo-mode notice (shown when WORKER_URL is empty) -->
+    <p id="demoBanner" class="notice notice--info" hidden data-i18n="demoBanner">وضع تجريبي: الأسعار المعروضة أمثلة توضيحية، وليست أسعاراً حقيقية.</p>
+
+    <!-- Results -->
+    <section id="resultsSection" class="results" aria-labelledby="resultsTitle" hidden>
+      <div class="results__head">
+        <h2 id="resultsTitle" class="results__title"></h2>
+        <p id="resultsMeta" class="muted results__meta" aria-live="polite"></p>
+      </div>
+
+      <div class="toolbar" id="toolbar">
+        <label class="field">
+          <span class="field__label" data-i18n="sortLabel">الترتيب</span>
+          <select id="sortSelect" class="select">
+            <option value="price-asc" data-i18n="sortAsc">الأرخص أولاً</option>
+            <option value="price-desc" data-i18n="sortDesc">الأغلى أولاً</option>
+            <option value="rating" data-i18n="sortRating">الأعلى تقييماً</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field__label" data-i18n="storeLabel">المتجر</span>
+          <select id="storeSelect" class="select">
+            <option value="" data-i18n="allStores">كل المتاجر</option>
+          </select>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="saudiOnly">
+          <span data-i18n="saudiOnly">متاجر سعودية فقط</span>
+        </label>
+      </div>
+
+      <div id="bestPrice"></div>
+      <div id="status" role="status" aria-live="polite"></div>
+      <ul id="resultsList" class="grid" aria-busy="false"></ul>
+    </section>
+
+    <!-- Direct store search links (always available, no quota) -->
+    <section class="direct" aria-labelledby="directTitle">
+      <h2 id="directTitle" class="direct__title" data-i18n="directTitle">ابحث مباشرة في المتاجر</h2>
+      <p class="muted" data-i18n="directSub">يفتح نتائج البحث داخل المتجر نفسه في نافذة جديدة.</p>
+      <div id="directLinks" class="direct__grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p data-i18n="footerNote">الأسعار تقريبية وتُحدَّث دورياً، وقد تختلف عن سعر المتجر لحظة الشراء. التحويل للريال حسب سعر الصرف اليومي.</p>
+      <p class="muted">© <span id="year"></span> <span data-i18n="brand">سكنر أسعار</span> – Price Scanner</p>
+    </div>
+  </footer>
+
+  <!-- Result card template (filled safely by app.js using textContent) -->
+  <template id="cardTpl">
+    <li class="card">
+      <div class="card__media">
+        <img class="card__img" alt="" width="96" height="96" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+      </div>
+      <div class="card__body">
+        <h3 class="card__title"></h3>
+        <p class="card__store">
+          <img class="card__store-icon" alt="" width="16" height="16" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+          <span class="card__store-name"></span>
+          <span class="badge badge--sa" hidden></span>
+        </p>
+        <p class="card__meta muted"></p>
+      </div>
+      <div class="card__price">
+        <p class="price"></p>
+        <p class="price__orig muted"></p>
+        <p class="price__old"><s></s></p>
+        <a class="btn btn--outline card__cta" target="_blank" rel="noopener noreferrer nofollow"></a>
+      </div>
+    </li>
+  </template>
+
+  <script src="config.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
